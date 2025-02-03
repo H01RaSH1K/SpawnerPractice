@@ -4,17 +4,18 @@ using UnityEngine.Pool;
 
 public class Spawner : MonoBehaviour
 {
-    [SerializeField] private Enemy _enemyPrefab;
+    [SerializeField] private Mover _enemyPrefab;
     [SerializeField] private int _enemyPoolCapacity = 20;
     [SerializeField] private int _enemyPoolMaxSize = 200;
     [SerializeField] private float _enemySpawnRate = 0.5f;
+    [SerializeField] private Transform _target;
 
     private WaitForSeconds _waitForSpawn;
-    private ObjectPool<Enemy> _enemyPool;
+    private ObjectPool<Mover> _enemyPool;
 
     private void Awake()
     {
-        _enemyPool = new ObjectPool<Enemy>(
+        _enemyPool = new ObjectPool<Mover>(
             createFunc: () => Instantiate(_enemyPrefab),
             actionOnGet: InitializeEnemy,
             actionOnRelease: (enemy) => enemy.gameObject.SetActive(false),
@@ -46,20 +47,10 @@ public class Spawner : MonoBehaviour
         }
     }
 
-    private void InitializeEnemy(Enemy enemy)
+    private void InitializeEnemy(Mover enemy)
     {
-        enemy.Initialize(GetRandomHorizontalEnemyDirection());
+        enemy.SetTarget(_target);
         enemy.gameObject.SetActive(true);
         enemy.transform.position = transform.position;
-    }
-
-    private Vector3 GetRandomHorizontalEnemyDirection()
-    {
-        float randomRange = 1;
-        float y = 0;
-        float x = Random.Range(-randomRange, randomRange);
-        float z = Random.Range(-randomRange, randomRange);
-
-        return new Vector3(x, y, z);
     }
 }
