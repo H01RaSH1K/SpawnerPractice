@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -6,8 +7,9 @@ public class Spawner : MonoBehaviour
     [SerializeField] private Enemy _enemyPrefab;
     [SerializeField] private int _enemyPoolCapacity = 20;
     [SerializeField] private int _enemyPoolMaxSize = 200;
-    [SerializeField] private float _enemySpawnRate = 2f;
+    [SerializeField] private float _enemySpawnRate = 0.5f;
 
+    private WaitForSeconds _waitForSpawn;
     private ObjectPool<Enemy> _enemyPool;
 
     private void Awake()
@@ -21,21 +23,27 @@ public class Spawner : MonoBehaviour
             defaultCapacity: _enemyPoolCapacity,
             maxSize: _enemyPoolMaxSize
         );
+
+        _waitForSpawn = new WaitForSeconds(1 / _enemySpawnRate);
     }
 
     private void OnEnable()
     {
-        InvokeRepeating(nameof(GetEnemy), 0f, _enemySpawnRate);
+        StartCoroutine(SpawnCoroutine());
     }
 
     private void OnDisable()
     {
-        CancelInvoke();
+        StopAllCoroutines();
     }
 
-    private void GetEnemy()
+    private IEnumerator SpawnCoroutine()
     {
-        _enemyPool.Get();
+        while (true)
+        {
+            _enemyPool.Get();
+            yield return _waitForSpawn;
+        }
     }
 
     private void InitializeEnemy(Enemy enemy)
