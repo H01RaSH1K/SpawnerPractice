@@ -4,20 +4,26 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class PathFollower : MonoBehaviour
 {
-    [SerializeField] private CicledPath _path;
+    [SerializeField] private PathCicled _path;
+    [SerializeField] private float _wayPointThreshold;
+    
+    private float _wayPointThresholdSquared;
 
     private Mover _mover;
     private Transform _nextWayPoint;
 
     private void Awake()
     {
+        _wayPointThresholdSquared = _wayPointThreshold * _wayPointThreshold;
         _mover = GetComponent<Mover>();
         SetNextWayPoint();
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.transform == _nextWayPoint)
+        float distanceToWayPointSquared = (other.transform.position - _nextWayPoint.position).sqrMagnitude;
+
+        if (distanceToWayPointSquared < _wayPointThresholdSquared)
             SetNextWayPoint();
     }
 

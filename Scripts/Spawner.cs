@@ -7,7 +7,7 @@ public class Spawner : MonoBehaviour
     [SerializeField] private Mover _enemyPrefab;
     [SerializeField] private int _enemyPoolCapacity = 20;
     [SerializeField] private int _enemyPoolMaxSize = 200;
-    [SerializeField] private float _enemySpawnRate = 0.5f;
+    [SerializeField] private float _enemySpawnInterval = 2f;
     [SerializeField] private Transform _target;
 
     private WaitForSeconds _waitForSpawn;
@@ -25,7 +25,7 @@ public class Spawner : MonoBehaviour
             maxSize: _enemyPoolMaxSize
         );
 
-        _waitForSpawn = new WaitForSeconds(1 / _enemySpawnRate);
+        _waitForSpawn = new WaitForSeconds(_enemySpawnInterval);
     }
 
     private void OnEnable()
@@ -40,9 +40,10 @@ public class Spawner : MonoBehaviour
 
     private IEnumerator SpawnCoroutine()
     {
-        while (true)
+        while (enabled)
         {
             _enemyPool.Get();
+
             yield return _waitForSpawn;
         }
     }

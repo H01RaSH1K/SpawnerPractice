@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CicledPath : MonoBehaviour
+public class PathCicled : MonoBehaviour
 {
     [SerializeField] List<Transform> _wayPoints;
 
